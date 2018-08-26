@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Visitor Pattern</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+		<link rel="stylesheet" href="css/overrides.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1 style="color:#fff0b3;">VISITOR PATTERN</h1>
+					<p style="color:#ffcc00;">What is the Visitor Pattern?</p>
+					<img width="427px" data-src="images/visitor.png" alt="visitor badge">
+				</section>
+
+				<section>
+					<section>
+						<h3 style="color:#f8d900;text-transform:none;">
+							According to Wikipedia,<br /> 
+							in object-oriented programming,<br /> the visitor design pattern is a way of<br /> separating an algorithm from the<br />object structure that it operates on.
+						</h3> 
+					</section>
+					<section>
+						<h3 style="color:#fff0b3;text-transform:none;">A practical result of this separation<br /> 
+							is the ability to add new operations<br />
+							to existent object structures<br />without modifying those structures.</h3>
+					</section>
+					<section>
+						<h3 style="text-transform:none;"><span style="color:#fff;">
+							In essence, it allows adding new virtual functions to a family of classes, without modifying the classes.
+						</h3>
+					</section>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;">
+						<span style="color:#f8d900;">
+							The Visitor pattern is one of the behavioral design patterns
+							<br /><br />
+						</span>
+						<span style="color:#fff0b3;">
+							It also enforces the<br />open/closed principle.
+						</span>
+					</h3>
+				</section>
+				<section>
+					<ul>
+						<li style="color:#ffcc00;text-align:left"><h3 style="color:#ffcc00;text-transform:none;">
+							In it, one interface (Visitor) defines a computation / operation
+						</h3></li>
+						<li style="color:#fff0b3;text-align:left"><h3 class="fragment" style="color:#fff0b3;text-transform:none;">
+							While another (Visitable) is responsible for providing data access.
+						</h3></li>
+					</ul>
+						<br /><br />
+						<h3 class="fragment" style="color:#fff;text-transform:none;text-align:left">
+							The visitor pattern is one of the most powerful and convenient of patterns.
+						</h3>
+				</section>
+
+				<section data-background="images/got-1.jpg" data-state="bg-img">
+					<h2 style="color:#fff;text-transform:none;line-height:84px;">Let's say we need to add<br />
+					some behavior to a class</h2>
+				</section>
+
+				<section>
+					<pre><code class="hljs lang-ruby" data-trim data-noescape>
+						class House
+						  attr_reader :name
+
+						  def initialize(name)   
+						    @name = name
+						  end
+						end
+
+						lannister = House.new("Lannister")
+					</code></pre>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;">This looks pretty simple until:</h3><br /> 
+
+					<ol>
+						<li style="color:#0d6eff">You find out you might need to add more and more behavior at later points. </li>
+						<br />
+						<li style="color:#0d6eff">You realize that things are getting pretty messy.</li>
+						<br />
+						<li style="color:#0d6eff">You find out this class is a duck type. You have to add the same behavior to all the related duck types.</li>
+					</ol>	
+
+				</section>
+
+				<section data-background="https://media.giphy.com/media/2L3eveDEgjNFC/giphy.gif" data-state="tg-img">
+					<h2 style="color:#fff;text-transform:none;line-height:84px;">Enter the visitor pattern!</h2>
+				</section>
+				
+				<section>
+					<h3 style="text-transform:none;margin-bottom:40px;color:#0d6eff;">
+						We first create the Visitor<br />and Visitable modules
+					</h3>
+
+					<pre><code class="hljs lang-ruby" data-trim data-noescape>
+						module Visitor
+						  def visit(object)  
+						    "override implementation here"
+						  end  
+						end
+					</code></pre>
+
+					<br />
+
+					<pre><code class="hljs lang-ruby" data-trim data-noescape>
+						module Visitable 
+						  def accept(visitor)  
+						    visitor.visit(self)  
+						  end     
+						end
+					</code></pre>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;margin-bottom:40px;color:#0d6eff;">
+						We then include the Visitable module in the class we want to add behavior to
+					</h3>
+
+					<pre><code class="hljs lang-ruby" data-trim data-noescape>
+						class House 
+						  include Visitable  
+						  attr_reader :name
+
+						  def initialize(name)   
+						    @name = name
+						  end 
+						end
+					</code></pre>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;margin-bottom:40px;color:#0d6eff;">
+						Next, we create classes that add the new behavior and include the Visitor module in these classes.
+						<br /><br /> 
+						This implies that each of these classes must implement the visit method.
+					</h3>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;margin-bottom:40px;color:#0d6eff;">
+						The visit method gives us<br />access to the data object
+					</h3>
+					<pre><code class="hljs lang-ruby" data-trim data-noescape>
+						class AddPerson
+						  include Visitor
+						  attr_reader :first_name
+						  attr_reader :character
+						  
+						  def initialize(first_name, character, alive=true)
+						    @first_name = first_name
+						    @alive = alive
+						    @character = character
+						  end
+
+						  def alive?
+						    @alive
+						  end
+
+						  def get_person(visitable_object)
+						    status = alive? ? "Is alive" : "Is dead"
+						    puts "#{first_name} : #{character} guy"
+						    puts "Belongs to House #{visitable_object.name}"
+						    puts "#{status}\n\n"
+						  end
+
+						  def visit(visitable_object)
+						    get_person(visitable_object)
+						  end
+						end
+					</code></pre>
+				</section>
+
+
+				<section>
+					<h3 style="text-transform:none;color:#0d6eff;">We can now inspect<br />the results of our pattern.</h3>
+
+					<pre><code class="hljs lang-ruby" data-trim data-noescape>
+						stark = House.new("Stark")
+						arya = AddPerson.new("Arya", "good")
+						stark.accept(arya)          
+						#=> Arya : good guy, Belongs to House Stark, Is alive
+
+						ned_stark = AddPerson.new("Ned", "good", false)
+						stark.accept(ned_stark)     
+						#=> Ned : good guy, Belongs to House Stark, Is dead
+
+						lannister = House.new("Lannister")
+						tyrion = AddPerson.new("Tyrion", "good")
+						lannister.accept(tyrion)    
+						#=> Tyrion : good guy, Belongs to House Lannister, Is alive
+
+						cersei = AddPerson.new("Cersei", "bad")
+						lannister.accept(cersei)    
+						#=> Cersei : bad guy, Belongs to House Lannister, Is alive
+					</code></pre>
+				</section>
+
+				<section>
+					<a style="color:#0d6eff;font-size:72px;font-weight:bold" href="https://repl.it/@shibani77/SomberDazzlingDownloads" target="_blank">REPL</a>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;color:#0d6eff;">Next, let's take a look at a Java implementation</h3>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;color:#0d6eff;">We first create our interfaces</h3>
+					<pre><code class="hljs lang-java" data-trim data-noescape>
+					interface Visitor {
+						
+						public double visit(Furniture furnitureItem);
+						
+						public double visit(Clothing clothingItem);
+						
+						public double visit(Grocery groceryItem);
+						
+					}
+					</code></pre>
+					<br />
+					<pre><code class="hljs lang-java" data-trim data-noescape>
+					interface Visitable {
+						
+						public double accept(Visitor visitor);
+						
+					}
+					</code></pre>
+				</section>
+
+				<section>
+					<section>
+						<h3 style="text-transform:none; color:#0d6eff;">Next we implement our Visitable interface
+						in the classes we want<br />to add behavior to</h3>
+
+						<pre><code class="hljs lang-java" data-trim data-noescape>
+							class Furniture implements Visitable {
+	
+								private double price;
+
+								Furniture(double price) {
+									price = price;
+								}
+
+								public double accept(Visitor visitor) {
+									return visitor.visit(this);
+								}
+
+								public double getPrice() {
+									return price;
+								}
+								
+							}
+						</code></pre>
+					</section>
+					<section>
+						<pre><code class="hljs lang-java" data-trim data-noescape>
+							class Clothing implements Visitable {
+	
+								private double price;
+
+								Clothing(double price) {
+									price = price;
+								}
+
+								public double accept(Visitor visitor) {
+									return visitor.visit(this);
+								}
+
+								public double getPrice() {
+									return price;
+								}
+								
+							}
+						</code></pre>
+					</section>
+					<section>
+						<pre><code class="hljs lang-java" data-trim data-noescape>
+							class Grocery implements Visitable {
+	
+								private double price;
+
+								Grocery(double price) {
+									price = price;
+								}
+
+								public double accept(Visitor visitor) {
+									return visitor.visit(this);
+								}
+
+								public double getPrice() {
+									return price;
+								}
+								
+							}
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+					<h3 style="text-transform:none;color:#0d6eff;">Finally, we create new classes that<br />include the new behavior we want,<br />and implement the Visitor interface. </h3>
+
+					<pre><code class="hljs lang-java" data-trim data-noescape>
+						class TaxVisitor implements Visitor {
+							
+							public TaxVisitor() {}
+							
+							public double visit(Furniture furnitureItem) {
+								System.out.println("Furniture Item: Price with Tax");
+								return (furnitureItem.getPrice() + (furnitureItem.getPrice() * .10));
+							}
+								
+							public double visit(Clothing clothingItem) {
+								System.out.println("Clothing Item: Price with Tax");
+								return (clothingItem.getPrice() + (clothingItem.getPrice() * .30));
+							}
+								
+							public double visit(groceryItem groceryItem) {
+								System.out.println("Grocery Item: Price with Tax");
+								return (groceryItem.getPrice() + (groceryItem.getPrice() * 0));
+							}
+						}
+						</code></pre>
+					</section>
+					<section>
+						<pre><code class="hljs lang-java" data-trim data-noescape>
+							class HolidaySaleVisitor implements Visitor {
+								
+								public HolidaySaleVisitor() {}
+								
+								public double visit(Furniture furnitureItem) {
+									System.out.println("Furniture Item: Holiday Sale Discount");
+									return (furnitureItem.getPrice() * .10);
+								}
+									
+								public double visit(Clothing clothingItem) {
+									System.out.println("Clothing Item: Holiday Sale Discount");
+									return (clothingItem.getPrice() * .15);
+								}
+									
+								public double visit(Grocery groceryItem) {
+									System.out.println("Grocery Item: Holiday Sale Discount");
+									return (groceryItem.getPrice() * .20);
+								}
+							}
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;color:#0d6eff;">And now we can put our pattern to work:</h3>
+					<pre>
+						<code class="hljs lang-java" data-trim data-noescape>
+							public class VisitorPattern {
+								public static void main(String[] args) {
+									
+									TaxVisitor taxCalc = new TaxVisitor();
+									HolidaySaleVisitor holidaySaleCalc = new HolidaySaleVisitor();
+									
+									Grocery arugula = new Grocery(2.99);
+									Clothing shirt = new Clothing(39.99);
+									Furniture sofa = new Furniture(1299.00);
+									<br />
+									System.out.println("PRICES WITH TAX\n");
+									<br />
+									System.out.println(arugula.accept(taxCalc) + "\n");
+									//=> Grocery Item: Price with Tax - 2.99
+									<br />	
+									System.out.println(shirt.accept(taxCalc) + "\n");
+									//=> Clothing Item: Price with Tax - 51.99
+									<br />
+									System.out.println(sofa.accept(taxCalc) + "\n");
+									//=> Furniture Item: Price with Tax - 1429.99
+									<br />
+									System.out.println("HOLIDAY SALE PRICES\n");
+									<br />
+									System.out.println(arugula.accept(taxCalc) - arugula.accept(holidaySaleCalc)"\n");
+									//=> Grocery Item: Holiday Sale Price - 2.39
+									<br />
+									System.out.println(shirt.accept(taxCalc) - shirt.accept(holidaySaleCalc) + "\n");
+									//=> Clothing Item: Holiday Sale Price - 45.99
+									<br />
+									System.out.println(sofa.accept(taxCalc) - sofa.accept(holidaySaleCalc) + "\n");
+									//=> Furniture Item: Holiday Sale Price - 1299.99
+
+								}
+							}
+						</code>
+					</pre>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;">TO RECAP:<br /><br />
+						<span style="color: #33cc33;">We can implement the Visitor pattern<br /><br />
+						by following these steps:
+					</span>
+					</h3>
+				</section>
+
+				<section>
+					<section>
+						<ul style="color:#33cc33;">
+							<li>Create a Visitor interface/module<br />with an accept method</li><br /><br />
+							<li>Create a Visitable interface/module<br />with a visitor method</li>
+						</ul>
+					</section>
+
+					<section>
+						<ul style="color:#33cc33;"><span style="color:#fff;">Visitable:</span><br /><br />
+							<li>Extend the original (data) class<br />with the Visitable module</li><br />
+							<li>Add the accept method to the<br /> Visitable class</li>
+						</ul>
+					</section>
+
+					<section>
+						<ul style="color:#33cc33;"><span style="color:#fff;">Visitors:</span><br /><br />
+							<li>Create new classes with the required new behavior</li><br />
+							<li>Extend these classes with the Visitor module</li><br />
+							<li>Implement the visit method in each of these new Visitor classes</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;color:#33cc33;">
+						In this way, with the help of visitor pattern, we can move the operational logic from the objects themselves to another class.
+					</h3>
+				</section>
+
+				<section>
+					<p style="color:#9999ff;">This approach encourages designing<br /> lightweight Element classes - because<br /> processing functionality is removed<br />from their list of responsibilities.<br /><br />
+
+					New functionality can easily be added<br />
+					to the original classes by creating new<br /> Visitor classes.</p>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;margin-bottom:50px;">Double Dispatch</h3>
+					<p style="text-align:left;"><span style="color:#9999ff;">The Visitor Pattern implements <span style="color:#fff;">double dispatch.</span><br /><br />
+					The operation executed depends on the types of <span style="color:#fff;">TWO</span> receivers<br />
+						<ul style="color:#9999ff;text-align:left;">
+							<li span style="color:#9999ff;">
+								the type of the Visitor
+							</li><br />
+							<li style="color:#9999ff;">
+								and the type of the element it visits
+							</li>
+						</ul>
+					</span></p>
+				</section>
+
+				<section>
+					<h3 style="text-transform:none;">When to Use It:</h3>
+					<ul style="color:#9999ff;text-align:left;">
+						<li>When extending a class's functionality</li>
+						<li>When access to the original class is limited</li>
+					</ul>
+					<p style="margin-bottom:50px;">_________________</p>
+					<p style="color:#9999ff;">In this way the Visitor pattern allows computation</p><p style="color:#9999ff;">classes to quite literally 'visit' the objects they need</p><p style="color:#9999ff;">to perform computations on.</p>
+				</section>
+
+				<section data-background="https://media.giphy.com/media/cI6Qfr0bWjDWM/giphy.gif" data-state="fin-image">
+					<h2 style="color:#000; font-size:144px;font-weight:bold">FIN</h2>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'convex', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/search/search.js', async: true },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
