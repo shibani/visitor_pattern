@@ -109,14 +109,16 @@
 				</section>
 
 				<section>
-					<h3 style="text-transform:none;">This looks pretty simple until:</h3><br /> 
+					<h3 style="text-transform:none;">
+						Adding behavior to this class looks pretty simple until:</h3><br /> 
 
 					<ol>
 						<li style="color:#0d6eff">You find out you might need to add more and more behavior at later points. </li>
 						<br />
+						<li style="color:#0d6eff">You find out this class is a duck type. You have to add the same behavior to all the related duck types.</li>
 						<li style="color:#0d6eff">You realize that things could get pretty messy.</li>
 						<br />
-						<li style="color:#0d6eff">You find out this class is a duck type. You have to add the same behavior to all the related duck types.</li>
+						<li>Is there a better way to design our code?</li>
 					</ol>	
 
 				</section>
@@ -168,7 +170,7 @@
 
 				<section>
 					<h3 style="text-transform:none;margin-bottom:40px;color:#0d6eff;">
-						Next, we create classes that add the new behavior and include the Visitor module in these classes.
+						Next, we create Visitor classes that add the new behavior and include the Visitor module in these classes.
 						<br /><br /> 
 						This implies that each of these classes must implement the visit method.
 					</h3>
